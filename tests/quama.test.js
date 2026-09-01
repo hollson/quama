@@ -3,15 +3,15 @@ const assert = require('node:assert');
 const path = require('path');
 
 // Test configuration
-describe('MyAnget Configuration', () => {
+describe('Quama Configuration', () => {
   it('should have valid default mode', () => {
-    const { DEFAULT_MODE, RUNTIME_MODES } = require('../hooks/myanget-config');
+    const { DEFAULT_MODE, RUNTIME_MODES } = require('../hooks/quama-config');
     assert.strictEqual(DEFAULT_MODE, 'full');
     assert.ok(RUNTIME_MODES.includes(DEFAULT_MODE));
   });
 
   it('should normalize modes correctly', () => {
-    const { normalizeMode, normalizePersistedMode } = require('../hooks/myanget-config');
+    const { normalizeMode, normalizePersistedMode } = require('../hooks/quama-config');
     
     // Valid runtime modes
     assert.strictEqual(normalizeMode('lite'), 'lite');
@@ -29,32 +29,32 @@ describe('MyAnget Configuration', () => {
   });
 
   it('should detect deactivation commands', () => {
-    const { isDeactivationCommand } = require('../hooks/myanget-config');
+    const { isDeactivationCommand } = require('../hooks/quama-config');
     
-    assert.strictEqual(isDeactivationCommand('stop myanget'), true);
+    assert.strictEqual(isDeactivationCommand('stop quama'), true);
     assert.strictEqual(isDeactivationCommand('normal mode'), true);
-    assert.strictEqual(isDeactivationCommand('STOP MYANGET'), true);
+    assert.strictEqual(isDeactivationCommand('STOP QUAMA'), true);
     assert.strictEqual(isDeactivationCommand('NORMAL MODE'), true);
     
     // Should not match partial commands
-    assert.strictEqual(isDeactivationCommand('please stop myanget'), false);
+    assert.strictEqual(isDeactivationCommand('please stop quama'), false);
     assert.strictEqual(isDeactivationCommand('switch to normal mode'), false);
     assert.strictEqual(isDeactivationCommand('other command'), false);
   });
 });
 
 // Test instructions builder
-describe('MyAnget Instructions', () => {
+describe('Quama Instructions', () => {
   it('should return instructions for valid modes', () => {
-    const { getMyangetInstructions } = require('../hooks/myanget-instructions');
+    const { getQuamaInstructions } = require('../hooks/quama-instructions');
     
-    const liteInstructions = getMyangetInstructions('lite');
-    const fullInstructions = getMyangetInstructions('full');
-    const ultraInstructions = getMyangetInstructions('ultra');
+    const liteInstructions = getQuamaInstructions('lite');
+    const fullInstructions = getQuamaInstructions('full');
+    const ultraInstructions = getQuamaInstructions('ultra');
     
-    assert.ok(liteInstructions.includes('MYANGET MODE ACTIVE'));
-    assert.ok(fullInstructions.includes('MYANGET MODE ACTIVE'));
-    assert.ok(ultraInstructions.includes('MYANGET MODE ACTIVE'));
+    assert.ok(liteInstructions.includes('QUAMA MODE ACTIVE'));
+    assert.ok(fullInstructions.includes('QUAMA MODE ACTIVE'));
+    assert.ok(ultraInstructions.includes('QUAMA MODE ACTIVE'));
     
     // Each mode should have different content
     assert.notStrictEqual(liteInstructions, fullInstructions);
@@ -62,28 +62,28 @@ describe('MyAnget Instructions', () => {
   });
 
   it('should handle review mode specially', () => {
-    const { getMyangetInstructions } = require('../hooks/myanget-instructions');
+    const { getQuamaInstructions } = require('../hooks/quama-instructions');
     
-    const reviewInstructions = getMyangetInstructions('review');
-    assert.ok(reviewInstructions.includes('MYANGET MODE ACTIVE'));
+    const reviewInstructions = getQuamaInstructions('review');
+    assert.ok(reviewInstructions.includes('QUAMA MODE ACTIVE'));
     assert.ok(reviewInstructions.includes('review'));
   });
 
   it('should fallback to default instructions when skill file missing', () => {
-    const { getFallbackInstructions } = require('../hooks/myanget-instructions');
+    const { getFallbackInstructions } = require('../hooks/quama-instructions');
     
     const fallback = getFallbackInstructions('full');
-    assert.ok(fallback.includes('MYANGET MODE ACTIVE'));
+    assert.ok(fallback.includes('QUAMA MODE ACTIVE'));
     assert.ok(fallback.includes('full'));
     assert.ok(fallback.includes('project management'));
   });
 });
 
 // Test command parsing
-describe('MyAnget Commands', () => {
+describe('Quama Commands', () => {
   it('should parse command files correctly', () => {
     const fs = require('fs');
-    const commandPath = path.join(__dirname, '..', 'commands', 'myanget.toml');
+    const commandPath = path.join(__dirname, '..', 'commands', 'quama.toml');
     
     // Check if command file exists
     if (fs.existsSync(commandPath)) {
@@ -95,7 +95,7 @@ describe('MyAnget Commands', () => {
 });
 
 // Test skill structure
-describe('MyAnget Skills', () => {
+describe('Quama Skills', () => {
   it('should have required skill files', () => {
     const fs = require('fs');
     const skillsDir = path.join(__dirname, '..', 'skills');

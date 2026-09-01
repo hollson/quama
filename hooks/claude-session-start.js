@@ -1,22 +1,22 @@
 #!/usr/bin/env node
-// myanget — Claude Code SessionStart activation hook
+// quama — Claude Code SessionStart activation hook
 //
 // Runs on every session start:
-//   1. Writes flag file at $CLAUDE_CONFIG_DIR/.myanget-active (defaults to ~/.claude; statusline reads this)
-//   2. Emits myanget ruleset as hidden SessionStart context
+//   1. Writes flag file at $CLAUDE_CONFIG_DIR/.quama-active (defaults to ~/.claude; statusline reads this)
+//   2. Emits quama ruleset as hidden SessionStart context
 //   3. Detects missing statusline config and emits setup nudge
 
 const fs = require('fs');
 const path = require('path');
-const { getDefaultMode, getClaudeDir, isShellSafe } = require('./myanget-config');
-const { getMyangetInstructions } = require('./myanget-instructions');
+const { getDefaultMode, getClaudeDir, isShellSafe } = require('./quama-config');
+const { getQuamaInstructions } = require('./quama-instructions');
 const {
   clearMode,
   isCodex,
   isCopilot,
   setMode,
   writeHookOutput,
-} = require('./myanget-runtime');
+} = require('./quama-runtime');
 
 const claudeDir = getClaudeDir();
 const settingsPath = path.join(claudeDir, 'settings.json');
@@ -38,8 +38,8 @@ try {
   // Silent fail -- flag is best-effort, don't block the hook
 }
 
-// 2. Emit the myanget ruleset, filtered to the active intensity level.
-let output = getMyangetInstructions(mode);
+// 2. Emit the quama ruleset, filtered to the active intensity level.
+let output = getQuamaInstructions(mode);
 
 // 3. Detect missing statusline config — nudge Claude to help set it up
 if (!isCodex && !isCopilot) try {
@@ -56,11 +56,11 @@ if (!isCodex && !isCopilot) try {
   // Nudge at most once — the flag file marks that the user has already seen
   // (and implicitly declined) the statusline setup offer. Repeating it every
   // session start turns a helpful hint into a nag.
-  const nudgeFlagPath = path.join(claudeDir, '.myanget-statusline-nudged');
+  const nudgeFlagPath = path.join(claudeDir, '.quama-statusline-nudged');
   if (!hasStatusline && !fs.existsSync(nudgeFlagPath)) {
     try { fs.writeFileSync(nudgeFlagPath, ''); } catch (e) { /* best-effort */ }
     const isWindows = process.platform === 'win32';
-    const scriptName = isWindows ? 'myanget-statusline.ps1' : 'myanget-statusline.sh';
+    const scriptName = isWindows ? 'quama-statusline.ps1' : 'quama-statusline.sh';
     const scriptPath = path.join(__dirname, scriptName);
     if (isShellSafe(scriptPath)) {
       const command = isWindows
@@ -69,16 +69,16 @@ if (!isCodex && !isCopilot) try {
       const statusLineSnippet =
         '"statusLine": { "type": "command", "command": ' + JSON.stringify(command) + ' }';
       output += "\n\n" +
-        "STATUSLINE SETUP NEEDED: The myanget plugin includes a statusline badge showing active mode " +
-        "(e.g. [MYANGET], [MYANGET:ULTRA]). It is not configured yet. " +
+        "STATUSLINE SETUP NEEDED: The quama plugin includes a statusline badge showing active mode " +
+        "(e.g. [QUAMA], [QUAMA:ULTRA]). It is not configured yet. " +
         "To enable, add this to " + settingsPath + ": " +
         statusLineSnippet + " " +
         "Proactively offer to set this up for the user on first interaction.";
     } else {
-      // myanget: install path has shell metacharacters — don't embed it in a
+      // quama: install path has shell metacharacters — don't embed it in a
       // command snippet; have the agent wire it up by hand instead.
       output += "\n\n" +
-        "STATUSLINE SETUP NEEDED: The myanget plugin includes a statusline badge showing active mode. " +
+        "STATUSLINE SETUP NEEDED: The quama plugin includes a statusline badge showing active mode. " +
         "Its install path contains characters unsafe to embed in a shell command, so configure it manually: " +
         "add a statusLine command of type \"command\" that runs " + scriptName +
         " from the plugin's hooks directory to " + settingsPath + ", quoting/escaping the path for your shell. " +

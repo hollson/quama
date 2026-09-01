@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// myanget — UserPromptSubmit hook to track which myanget mode is active
-// Inspects user input for /myanget commands and writes mode to flag file
+// quama — UserPromptSubmit hook to track which quama mode is active
+// Inspects user input for /quama commands and writes mode to flag file
 
-const { getDefaultMode, isDeactivationCommand, writeDefaultMode } = require('./myanget-config');
-const { clearMode, isQoder, readMode, setMode, writeHookOutput } = require('./myanget-runtime');
-const { getMyangetInstructions } = require('./myanget-instructions');
+const { getDefaultMode, isDeactivationCommand, writeDefaultMode } = require('./quama-config');
+const { clearMode, isQoder, readMode, setMode, writeHookOutput } = require('./quama-runtime');
+const { getQuamaInstructions } = require('./quama-instructions');
 
 let input = '';
 let done = false;
@@ -17,10 +17,10 @@ function finish() {
     const data = JSON.parse(input.replace(/^\uFEFF/, ''));
     const prompt = (data.prompt || '').trim().toLowerCase();
 
-    // Match /myanget commands
+    // Match /quama commands
     let modeSwitched = false;
     let deactivated = false;
-    if (/^[/@$]myanget/.test(prompt)) {
+    if (/^[/@$]quama/.test(prompt)) {
       const parts = prompt.split(/\s+/);
       const cmd = parts[0].replace(/^[@$]/, '/');
       const arg = parts[1] || '';
@@ -28,10 +28,10 @@ function finish() {
       let mode = null;
       let isReportOnly = false;
 
-      if (cmd === '/myanget-review' || cmd === '/myanget:myanget-review') {
+      if (cmd === '/quama-review' || cmd === '/quama:quama-review') {
         mode = 'review';
-      } else if (cmd === '/myanget' || cmd === '/myanget:myanget') {
-        // `/myanget default <mode>` persists the default to config (survives
+      } else if (cmd === '/quama' || cmd === '/quama:quama') {
+        // `/quama default <mode>` persists the default to config (survives
         // restarts). Plain switches stay session-scoped ("sticks until session
         // end"), so this is the only path that writes config. review is not a
         // valid default, so only off/lite/full/ultra are accepted.
@@ -39,7 +39,7 @@ function finish() {
           const dmode = parts[2];
           if (dmode === 'off' || dmode === 'lite' || dmode === 'full' || dmode === 'ultra') {
             writeDefaultMode(dmode);
-            writeHookOutput('UserPromptSubmit', dmode, 'MYANGET DEFAULT SET — new sessions start in ' + dmode + '.');
+            writeHookOutput('UserPromptSubmit', dmode, 'QUAMA DEFAULT SET — new sessions start in ' + dmode + '.');
           }
           return; // don't fall through to the session-mode switch
         }
@@ -59,25 +59,25 @@ function finish() {
         writeHookOutput(
           'UserPromptSubmit',
           mode,
-          'MYANGET MODE ACTIVE — level: ' + mode,
+          'QUAMA MODE ACTIVE — level: ' + mode,
         );
       } else if (mode && mode !== 'off') {
         setMode(mode);
         modeSwitched = true;
-        // myanget: Qoder needs the full ruleset every turn, so when a mode
+        // quama: Qoder needs the full ruleset every turn, so when a mode
         // switch happens we fold the confirmation into the ruleset output
         // below (one JSON on stdout) instead of emitting two separate writes.
         if (!isQoder) {
           writeHookOutput(
             'UserPromptSubmit',
             mode,
-            'MYANGET MODE CHANGED — level: ' + mode,
+            'QUAMA MODE CHANGED — level: ' + mode,
           );
         }
       } else if (mode === 'off') {
         clearMode();
         deactivated = true;
-        writeHookOutput('UserPromptSubmit', 'off', 'MYANGET MODE OFF');
+        writeHookOutput('UserPromptSubmit', 'off', 'QUAMA MODE OFF');
       }
     }
 
@@ -85,14 +85,14 @@ function finish() {
     if (!modeSwitched && !deactivated && isDeactivationCommand(prompt)) {
       clearMode();
       deactivated = true;
-      writeHookOutput('UserPromptSubmit', 'off', 'MYANGET MODE OFF');
+      writeHookOutput('UserPromptSubmit', 'off', 'QUAMA MODE OFF');
     }
 
     // Qoder has no SessionStart event, so UserPromptSubmit does double duty:
     // activate the default mode on first prompt (if no flag exists yet), then
     // inject the ruleset on every prompt. Claude Code/Codex do this in
-    // SessionStart via myanget-session-start.js; Qoder can't, so we do it here.
-    // Skip when deactivated — user just turned myanget off.
+    // SessionStart via quama-session-start.js; Qoder can't, so we do it here.
+    // Skip when deactivated — user just turned quama off.
     if (isQoder && !deactivated) {
       let currentMode = readMode();
       if (!currentMode) {
@@ -103,12 +103,12 @@ function finish() {
         }
       }
       if (currentMode && currentMode !== 'off') {
-        // myanget: one JSON per invocation — mode-switch confirmation is
+        // quama: one JSON per invocation — mode-switch confirmation is
         // folded into the ruleset header so Qoder gets both in one write.
         const header = modeSwitched
-          ? 'MYANGET MODE CHANGED — level: ' + currentMode + '\n\n'
+          ? 'QUAMA MODE CHANGED — level: ' + currentMode + '\n\n'
           : '';
-        writeHookOutput('UserPromptSubmit', currentMode, header + getMyangetInstructions(currentMode));
+        writeHookOutput('UserPromptSubmit', currentMode, header + getQuamaInstructions(currentMode));
       }
     }
   } catch (e) {

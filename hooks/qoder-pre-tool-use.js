@@ -1,28 +1,28 @@
 #!/usr/bin/env node
-// myanget — Qoder PreToolUse hook to inject myanget rules into subagents
+// quama — Qoder PreToolUse hook to inject quama rules into subagents
 //
 // SessionStart context is parent-thread only and never reaches subagents, so
-// without this every Task-spawned agent runs myanget-unaware.
-// When myanget mode is active, inject the same ruleset into each subagent.
+// without this every Task-spawned agent runs quama-unaware.
+// When quama mode is active, inject the same ruleset into each subagent.
 //
-// Scoping (opt-in): set MYANGET_SUBAGENT_MATCHER to a regex and
+// Scoping (opt-in): set QUAMA_SUBAGENT_MATCHER to a regex and
 // the ruleset is injected only into subagents whose agent_type matches. The
 // regex is unanchored and case-insensitive — "explore|general" matches either,
 // "^general$" is exact. Unset means inject into every subagent, as before.
 
-const { getMyangetInstructions } = require('./myanget-instructions');
-const { readMode, writeHookOutput } = require('./myanget-runtime');
+const { getQuamaInstructions } = require('./quama-instructions');
+const { readMode, writeHookOutput } = require('./quama-runtime');
 
 const mode = readMode();
 
-// Absent flag or off → myanget isn't active; inject nothing.
+// Absent flag or off → quama isn't active; inject nothing.
 if (!mode || mode === 'off') {
   process.exit(0);
 }
 
 function inject() {
   try {
-    writeHookOutput('PreToolUse', mode, getMyangetInstructions(mode));
+    writeHookOutput('PreToolUse', mode, getQuamaInstructions(mode));
   } catch (e) {
     // Silent fail — a stdout error at hook exit must not surface as a hook failure.
   }
@@ -31,8 +31,8 @@ function inject() {
 // A bad regex must never crash the hook; treat it as "no matcher" and inject.
 let matcherRe = null;
 try {
-  if (process.env.MYANGET_SUBAGENT_MATCHER) {
-    matcherRe = new RegExp(process.env.MYANGET_SUBAGENT_MATCHER, 'i');
+  if (process.env.QUAMA_SUBAGENT_MATCHER) {
+    matcherRe = new RegExp(process.env.QUAMA_SUBAGENT_MATCHER, 'i');
   }
 } catch (e) {
   matcherRe = null;

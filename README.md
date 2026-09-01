@@ -1,77 +1,84 @@
-# MyAnget
+# Quama
 
-Project management基座 for critical software projects. Manages code, documentation, design, dependencies, and testing.
+面向关键软件项目的项目管理基座。管理代码、文档、设计、依赖和测试。
 
-## Features
+## 功能特性
 
-- **Code Quality**: Review code for quality, security, performance, and maintainability.
-- **Documentation**: Generate and maintain README, API docs, architecture docs, and changelogs.
-- **Design Management**: Record design decisions, manage architecture patterns, ensure consistency.
-- **Dependency Management**: Check security vulnerabilities, update dependencies, verify license compliance.
-- **Test Coverage**: Analyze test coverage, improve test quality, plan automation.
-- **团队规范**: 包含完整的团队规范体系，涵盖核心原则、编码规范、项目管理、协作、安全、性能、测试、文档等方面。
+- **代码质量**：审查代码质量、安全性、性能和可维护性
+- **文档管理**：生成和维护 README、API 文档、架构文档和变更日志
+- **设计管理**：记录设计决策、管理架构模式、确保一致性
+- **依赖管理**：检查安全漏洞、更新依赖、验证许可证合规性
+- **测试覆盖**：分析测试覆盖率、改进测试质量、规划自动化
+- **团队规范**：包含完整的团队规范体系，涵盖核心原则、编码规范、项目管理、协作、安全、性能、测试、文档等方面
 
-## Supported Platforms
+## 支持平台
 
-- Claude Code
-- Codex
-- Qoder
-- OpenCode
-- Trae
-- Pi agent
-- CodeBuddy
+| 平台 | 状态 | 安装方式 |
+|------|------|----------|
+| Claude Code | ✅ 已支持 | `/plugin marketplace add hollson/quama` |
+| Codex | ✅ 已支持 | `codex plugin marketplace add hollson/quama` |
+| Qoder | ✅ 已支持 | 内置支持 |
+| OpenCode | ✅ 已支持 | `opencode.json` 添加 `@hollson/quama` |
+| Pi Agent | ✅ 已支持 | `pi install git:github.com/hollson/quama` |
+| Trae | ✅ 已支持 | 复制 `.trae/rules/` 下的规则文件 |
+| CodeBuddy | ✅ 已支持 | 复制 `.codebuddy/rules/` 下的规则文件 |
+| Cursor | 🔲 待实现 | — |
+| Windsurf | 🔲 待实现 | — |
+| GitHub Copilot | 🔲 待实现 | — |
+| Cline | 🔲 待实现 | — |
+| Aider | 🔲 待实现 | — |
 
-## Installation
+## 安装方式
 
 ### Claude Code
 ```bash
-/plugin marketplace add yourname/myanget
-/plugin install myanget@myanget
+/plugin marketplace add hollson/quama
+/plugin install quama@quama
 ```
 
 ### Codex
 ```bash
-codex plugin marketplace add yourname/myanget
-codex plugin add myanget@myanget
+codex plugin marketplace add hollson/quama
+codex plugin add quama@quama
 ```
 
 ### OpenCode
-Add to `opencode.json`:
+在 `opencode.json` 中添加：
 ```json
-{ "plugin": ["@yourname/myanget"] }
+{ "plugin": ["@hollson/quama"] }
 ```
 
 ### Pi Agent
 ```bash
-pi install git:github.com/yourname/myanget
+pi install git:github.com/hollson/quama
 ```
 
-### Other Platforms
-Copy the appropriate rule files from this repository to your project.
+### 其他平台
+将本仓库中对应的规则文件复制到你的项目中。
 
-## Usage
+## 使用方法
 
-### Commands
-- `/myanget [lite|full|ultra|off]` - Switch intensity level
-- `/myanget-project-status` - Check project status
-- `/myanget-code-review` - Review code quality
-- `/myanget-doc-gen` - Generate documentation
-- `/myanget-design-manage` - Manage design decisions
-- `/myanget-dependency-manage` - Manage dependencies
-- `/myanget-test-coverage` - Manage test coverage
+### 命令
+- `/quama [lite|full|ultra|off]` — 切换强度等级
+- `/quama-project-status` — 查看项目状态
+- `/quama-code-review` — 代码质量审查
+- `/quama-doc-gen` — 生成文档
+- `/quama-design-manage` — 管理设计决策
+- `/quama-dependency-manage` — 管理依赖
+- `/quama-test-coverage` — 管理测试覆盖
 
-### Modes
-- **lite**: Basic project management with suggestions
-- **full**: Comprehensive project management (default)
-- **ultra**: Strict project management with maximum oversight
+### 模式
+- **lite** — 基础项目管理，提供改进建议
+- **full** — 全面项目管理（默认）
+- **ultra** — 严格项目管理，最大监督力度
 
 ## 团队规范体系
 
-MyAnget 包含完整的团队规范体系，基于 Ponytail 项目的优秀实践，针对团队使用场景进行了优化。
+Quama 包含完整的团队规范体系，基于 Ponytail 项目的优秀实践，针对团队使用场景进行了优化。
 
 ### 规范文件位置
 ```
-.myanget/rules/
+.quama/rules/
 ├── core-principles.md      # 核心原则
 ├── coding-standards.md     # 编码规范
 ├── project-management.md   # 项目管理规范
@@ -98,15 +105,15 @@ MyAnget 包含完整的团队规范体系，基于 Ponytail 项目的优秀实�
 - 更新需要团队讨论和审批
 - 更新后需要通知所有成员
 
-## Configuration
+## 配置
 
-### Environment Variables
-- `MYANGET_DEFAULT_MODE`: Set default mode (lite/full/ultra/off)
-- `MYANGET_HIDE_STATUS`: Hide status indicator
-- `MYANGET_QUIET_STARTUP`: Suppress startup notification
+### 环境变量
+- `QUAMA_DEFAULT_MODE` — 设置默认模式（lite/full/ultra/off）
+- `QUAMA_HIDE_STATUS` — 隐藏状态指示器
+- `QUAMA_QUIET_STARTUP` — 抑制启动通知
 
-### Config File
-`~/.config/myanget/config.json`:
+### 配置文件
+`~/.config/quama/config.json`：
 ```json
 {
   "defaultMode": "full",
@@ -115,16 +122,16 @@ MyAnget 包含完整的团队规范体系，基于 Ponytail 项目的优秀实�
 }
 ```
 
-## Development
+## 开发
 
-### Testing
+### 运行测试
 ```bash
 npm test
 ```
 
-### Building
-The project is ready to use as-is. No build step required.
+### 构建
+项目开箱即用，无需构建步骤。
 
-## License
+## 许可证
 
 MIT

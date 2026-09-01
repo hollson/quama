@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// myanget — shared runtime utilities for Claude/Codex/Qoder hooks
+// quama — shared runtime utilities for Claude/Codex/Qoder hooks
 
 const fs = require('fs');
 const path = require('path');
-const { getConfigDir, getClaudeDir, normalizeMode } = require('./myanget-config');
+const { getConfigDir, getClaudeDir, normalizeMode } = require('./quama-config');
 
 const isCodex = !!process.env.CODEX_SESSION_ID;
 const isCopilot = !!process.env.COPILOT_SESSION_ID;
@@ -11,12 +11,12 @@ const isQoder = !!process.env.QODER_SESSION_ID;
 
 function getFlagPath() {
   if (isCodex) {
-    return path.join(getConfigDir(), '.myanget-active');
+    return path.join(getConfigDir(), '.quama-active');
   }
   if (isQoder) {
-    return path.join(getConfigDir(), '.myanget-active');
+    return path.join(getConfigDir(), '.quama-active');
   }
-  return path.join(getClaudeDir(), '.myanget-active');
+  return path.join(getClaudeDir(), '.quama-active');
 }
 
 function readMode() {

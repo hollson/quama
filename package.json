@@ -1,22 +1,22 @@
 {
-  "name": "myanget",
+  "name": "quama",
   "version": "1.0.0",
   "description": "Project management基座 for AI agents. Manages code, docs, design for critical projects.",
   "keywords": ["opencode-plugin", "project-management", "code-review", "documentation", "design"],
   "license": "MIT",
   "author": {
-    "name": "Your Name",
-    "url": "https://github.com/yourname"
+    "name": "hollson",
+    "url": "https://github.com/hollson"
   },
-  "homepage": "https://github.com/yourname/myanget",
+  "homepage": "https://github.com/hollson/quama",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourname/myanget.git"
+    "url": "git+https://github.com/hollson/quama.git"
   },
-  "main": "./.opencode/plugins/myanget.mjs",
+  "main": "./.opencode/plugins/quama.mjs",
   "exports": {
-    ".": "./.opencode/plugins/myanget.mjs",
-    "./plugin": "./.opencode/plugins/myanget.mjs"
+    ".": "./.opencode/plugins/quama.mjs",
+    "./plugin": "./.opencode/plugins/quama.mjs"
   },
   "files": [
     "AGENTS.md",
@@ -30,7 +30,7 @@
     ".pi-extension/",
     ".codebuddy/",
     ".trae/",
-    ".myanget/",
+    ".quama/",
     "scripts/",
     "docs/",
     "LICENSE"

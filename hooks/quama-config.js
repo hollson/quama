@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// myanget — shared configuration resolver
+// quama — shared configuration resolver
 //
 // Resolution order for default mode:
-//   1. MYANGET_DEFAULT_MODE environment variable
+//   1. QUAMA_DEFAULT_MODE environment variable
 //   2. Config file defaultMode field:
-//      - $XDG_CONFIG_HOME/myanget/config.json (any platform, if set)
-//      - ~/.config/myanget/config.json (macOS / Linux fallback)
-//      - %APPDATA%\myanget\config.json (Windows fallback)
+//      - $XDG_CONFIG_HOME/quama/config.json (any platform, if set)
+//      - ~/.config/quama/config.json (macOS / Linux fallback)
+//      - %APPDATA%\quama\config.json (Windows fallback)
 //   3. 'full'
 
 const fs = require('fs');
@@ -33,16 +33,16 @@ function normalizePersistedMode(mode) {
   return normalizeMode(mode) || normalizeConfigMode(mode);
 }
 
-// "stop myanget" / "normal mode" turn myanget off, but only as a standalone
+// "stop quama" / "normal mode" turn quama off, but only as a standalone
 // command. Matching the phrase anywhere in the message turned it off mid-task
 // for ordinary requests like "add a normal mode toggle" — so require the whole
 // message to be the command, ignoring case and trailing punctuation.
 function isDeactivationCommand(text) {
   const t = String(text || '').trim().toLowerCase().replace(/[.!?\s]+$/, '');
-  return t === 'stop myanget' || t === 'normal mode';
+  return t === 'stop quama' || t === 'normal mode';
 }
 
-// myanget: only embed the plugin install path in a statusline shell command when
+// quama: only embed the plugin install path in a statusline shell command when
 // it's made of ordinary path characters. An allowlist beats escaping every shell's
 // metacharacters; a hostile clone path (quotes, &, $, backtick, ;, etc.) falls back
 // to manual setup instead. Allows : \ / for normal Windows and POSIX paths. Full
@@ -53,15 +53,15 @@ function isShellSafe(p) {
 
 function getConfigDir() {
   if (process.env.XDG_CONFIG_HOME) {
-    return path.join(process.env.XDG_CONFIG_HOME, 'myanget');
+    return path.join(process.env.XDG_CONFIG_HOME, 'quama');
   }
   if (process.platform === 'win32') {
     return path.join(
       process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming'),
-      'myanget'
+      'quama'
     );
   }
-  return path.join(os.homedir(), '.config', 'myanget');
+  return path.join(os.homedir(), '.config', 'quama');
 }
 
 function getConfigPath() {
@@ -70,8 +70,8 @@ function getConfigPath() {
 
 function getDefaultMode() {
   // 1. Environment variable (highest priority)
-  const envMode = process.env.MYANGET_DEFAULT_MODE;
-  // myanget: a default must be a runtime level (off/lite/full/ultra); review is
+  const envMode = process.env.QUAMA_DEFAULT_MODE;
+  // quama: a default must be a runtime level (off/lite/full/ultra); review is
   // a session-only mode, never a valid default.
   if (envMode && RUNTIME_MODES.includes(envMode.toLowerCase())) {
     return envMode.toLowerCase();
@@ -93,11 +93,11 @@ function getDefaultMode() {
   return DEFAULT_MODE;
 }
 
-// Silence the startup toast while keeping myanget active.
-// MYANGET_QUIET_STARTUP=1 (or any truthy value; 0/false/empty mean "show it")
+// Silence the startup toast while keeping quama active.
+// QUAMA_QUIET_STARTUP=1 (or any truthy value; 0/false/empty mean "show it")
 // takes precedence, else config.quietStartup === true.
 function getQuietStartup() {
-  const env = process.env.MYANGET_QUIET_STARTUP;
+  const env = process.env.QUAMA_QUIET_STARTUP;
   if (env !== undefined) {
     const v = env.trim().toLowerCase();
     return v !== '' && v !== '0' && v !== 'false' && v !== 'no';
@@ -110,11 +110,11 @@ function getQuietStartup() {
   }
 }
 
-// Hide the status-bar indicator while keeping myanget active.
-// MYANGET_HIDE_STATUS=1 (or any truthy value; 0/false/empty mean "don't hide")
+// Hide the status-bar indicator while keeping quama active.
+// QUAMA_HIDE_STATUS=1 (or any truthy value; 0/false/empty mean "don't hide")
 // takes precedence, else config.hideStatus === true.
 function getHideStatus() {
-  const env = process.env.MYANGET_HIDE_STATUS;
+  const env = process.env.QUAMA_HIDE_STATUS;
   if (env !== undefined) {
     const v = env.trim().toLowerCase();
     return v !== '' && v !== '0' && v !== 'false' && v !== 'no';
@@ -128,7 +128,7 @@ function getHideStatus() {
 }
 
 function writeDefaultMode(mode) {
-  // myanget: only a runtime level can be a default; review is session-only.
+  // quama: only a runtime level can be a default; review is session-only.
   const normalized = normalizeMode(mode);
   if (!normalized) return null;
 

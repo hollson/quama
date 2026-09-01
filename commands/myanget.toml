@@ -1,2 +1,0 @@
-description = "Switch MyAnget intensity level (lite/full/ultra/off)"
-prompt = "Switch to MyAnget {{args}} mode. If no level specified, use full. Project management mode for critical software projects: ensure code quality, documentation completeness, design consistency. Review code for security and performance, document decisions, maintain design patterns, manage dependencies, and ensure test coverage."

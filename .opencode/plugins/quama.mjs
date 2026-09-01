@@ -1,13 +1,13 @@
-// myanget — OpenCode plugin.
+// quama — OpenCode plugin.
 //
-// Injects the myanget ruleset into every chat's system prompt at the active
-// intensity, persists /myanget mode switches, and registers slash commands so
+// Injects the quama ruleset into every chat's system prompt at the active
+// intensity, persists /quama mode switches, and registers slash commands so
 // they work when the package is installed from npm. Reuses the shared
 // instruction builder so Claude Code, Codex, pi, and OpenCode all read one
 // source of truth.
 //
 // OpenCode loads this as a server plugin — add it to your opencode.json:
-//   { "plugin": ["@yourname/myanget"] }
+//   { "plugin": ["@hollson/quama"] }
 
 import { createRequire } from 'module';
 import fs from 'fs';
@@ -19,15 +19,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // The shared instruction builder is CommonJS; bridge to it from this ES module.
 const require = createRequire(import.meta.url);
-const { getMyangetInstructions } = require('../../hooks/myanget-instructions');
-const { getDefaultMode, normalizePersistedMode } = require('../../hooks/myanget-config');
-const { parseCommandFile } = require('./myanget-frontmatter.cjs');
+const { getQuamaInstructions } = require('../../hooks/quama-instructions');
+const { getDefaultMode, normalizePersistedMode } = require('../../hooks/quama-config');
+const { parseCommandFile } = require('./quama-frontmatter.cjs');
 
 // OpenCode has no flag-file convention of its own; keep mode beside its config.
 const statePath = path.join(
   process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'),
   'opencode',
-  '.myanget-active',
+  '.quama-active',
 );
 
 function readMode() {
@@ -43,9 +43,9 @@ function writeMode(mode) {
   fs.writeFileSync(statePath, mode);
 }
 
-// Load all rule files from .myanget/rules/ directory
+// Load all rule files from .quama/rules/ directory
 function loadRuleFiles() {
-  const rulesDir = path.resolve(__dirname, '../../.myanget/rules');
+  const rulesDir = path.resolve(__dirname, '../../.quama/rules');
   const rules = [];
   
   try {
@@ -67,10 +67,10 @@ function loadRuleFiles() {
 
 export default async ({ client } = {}) => {
   const log = (level, message) => {
-    try { client && client.app && client.app.log({ body: { service: 'myanget', level, message } }); } catch (e) {}
+    try { client && client.app && client.app.log({ body: { service: 'quama', level, message } }); } catch (e) {}
   };
 
-  const myangetSkillsDir = path.resolve(__dirname, '../../skills');
+  const quamaSkillsDir = path.resolve(__dirname, '../../skills');
 
   return {
     // Register slash commands + skills directory.
@@ -87,8 +87,8 @@ export default async ({ client } = {}) => {
 
       config.skills = config.skills || {};
       config.skills.paths = config.skills.paths || [];
-      if (!config.skills.paths.includes(myangetSkillsDir)) {
-        config.skills.paths.push(myangetSkillsDir);
+      if (!config.skills.paths.includes(quamaSkillsDir)) {
+        config.skills.paths.push(quamaSkillsDir);
       }
     },
 
@@ -98,7 +98,7 @@ export default async ({ client } = {}) => {
       if (mode === 'off') return;
       
       // Load base instructions
-      const instructions = getMyangetInstructions(mode);
+      const instructions = getQuamaInstructions(mode);
       
       // Load rule files
       const ruleFiles = loadRuleFiles();
@@ -116,18 +116,18 @@ export default async ({ client } = {}) => {
       }
     },
 
-    // Persist `/myanget <level>` so the next turn's injection follows it.
-    // myanget: mode applies from the next message, not the current one — the
+    // Persist `/quama <level>` so the next turn's injection follows it.
+    // quama: mode applies from the next message, not the current one — the
     // transform reads the flag the command writes. Good enough; switch to a
     // synchronous store if same-turn switching ever matters.
     'command.execute.before': async (input) => {
-      if (!input || input.command !== 'myanget') return;
+      if (!input || input.command !== 'quama') return;
       // `off` is persisted like any mode; the transform reads it and stays silent.
       const args = String(input.arguments || '').trim();
       const mode = args ? normalizePersistedMode(args) : getDefaultMode();
       if (!mode) return;
       writeMode(mode);
-      log('info', 'myanget ' + mode);
+      log('info', 'quama ' + mode);
     },
   };
 };

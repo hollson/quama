@@ -1,18 +1,18 @@
 #!/usr/bin/env node
-// myanget — Codex SessionStart activation hook
+// quama — Codex SessionStart activation hook
 //
 // Runs on every session start:
-//   1. Writes flag file at $CODEX_CONFIG_DIR/.myanget-active
-//   2. Emits myanget ruleset as hidden SessionStart context
+//   1. Writes flag file at $CODEX_CONFIG_DIR/.quama-active
+//   2. Emits quama ruleset as hidden SessionStart context
 
 const fs = require('fs');
 const path = require('path');
-const { getDefaultMode, getConfigDir } = require('./myanget-config');
-const { getMyangetInstructions } = require('./myanget-instructions');
-const { clearMode, isCodex, setMode, writeHookOutput } = require('./myanget-runtime');
+const { getDefaultMode, getConfigDir } = require('./quama-config');
+const { getQuamaInstructions } = require('./quama-instructions');
+const { clearMode, isCodex, setMode, writeHookOutput } = require('./quama-runtime');
 
 const configDir = getConfigDir();
-const flagPath = path.join(configDir, '.myanget-active');
+const flagPath = path.join(configDir, '.quama-active');
 
 const mode = getDefaultMode();
 
@@ -30,8 +30,8 @@ try {
   // Silent fail -- flag is best-effort, don't block the hook
 }
 
-// 2. Emit the myanget ruleset, filtered to the active intensity level.
-let output = getMyangetInstructions(mode);
+// 2. Emit the quama ruleset, filtered to the active intensity level.
+let output = getQuamaInstructions(mode);
 
 try {
   writeHookOutput('SessionStart', mode, output);

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Shared MyAnget instruction builder for Claude hooks and Pi extension.
+// Shared Quama instruction builder for Claude hooks and Pi extension.
 
 const fs = require('fs');
 const path = require('path');
-const { DEFAULT_MODE, normalizeMode, normalizePersistedMode } = require('./myanget-config');
+const { DEFAULT_MODE, normalizeMode, normalizePersistedMode } = require('./quama-config');
 
 const INDEPENDENT_MODES = new Set(['review']);
 const SKILL_PATH = path.join(__dirname, '..', 'skills', 'project-status', 'SKILL.md');
@@ -41,7 +41,7 @@ function filterSkillBodyForMode(body, mode) {
 }
 
 function getFallbackInstructions(mode) {
-  return 'MYANGET MODE ACTIVE — level: ' + mode + '\n\n' +
+  return 'QUAMA MODE ACTIVE — level: ' + mode + '\n\n' +
     'You are a project management assistant for critical software projects.\n\n' +
     '## Core Principles\n\n' +
     '- Quality First: Never compromise on code quality for speed.\n' +
@@ -68,17 +68,17 @@ function getFallbackInstructions(mode) {
     'Always consider: impact on other components, team understanding, long-term maintainability.';
 }
 
-function getMyangetInstructions(mode) {
+function getQuamaInstructions(mode) {
   const configuredMode = normalizePersistedMode(mode) || DEFAULT_MODE;
 
   if (INDEPENDENT_MODES.has(configuredMode)) {
-    return 'MYANGET MODE ACTIVE — level: ' + configuredMode + '. Behavior defined by /myanget-' + configuredMode + ' skill.';
+    return 'QUAMA MODE ACTIVE — level: ' + configuredMode + '. Behavior defined by /quama-' + configuredMode + ' skill.';
   }
 
   const effectiveMode = normalizeMode(configuredMode) || DEFAULT_MODE;
 
   try {
-    return 'MYANGET MODE ACTIVE — level: ' + effectiveMode + '\n\n' +
+    return 'QUAMA MODE ACTIVE — level: ' + effectiveMode + '\n\n' +
       filterSkillBodyForMode(fs.readFileSync(SKILL_PATH, 'utf8'), effectiveMode);
   } catch (e) {
     return getFallbackInstructions(effectiveMode);
@@ -88,5 +88,5 @@ function getMyangetInstructions(mode) {
 module.exports = {
   filterSkillBodyForMode,
   getFallbackInstructions,
-  getMyangetInstructions,
+  getQuamaInstructions,
 };
