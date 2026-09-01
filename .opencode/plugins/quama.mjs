@@ -1,12 +1,10 @@
 // quama — OpenCode plugin.
 //
-// Injects the quama ruleset into every chat's system prompt at the active
-// intensity, persists /quama mode switches, and registers slash commands so
-// they work when the package is installed from npm. Reuses the shared
-// instruction builder so Claude Code, Codex, pi, and OpenCode all read one
-// source of truth.
+// 独立运行时，不依赖 ponytail。
+// 检测 ponytail 安装状态，未安装时提示用户。
+// 规则注入时添加 🐎 标记，便于验证 quama 是否生效。
 //
-// OpenCode loads this as a server plugin — add it to your opencode.json:
+// OpenCode 加载方式 — 在 opencode.json 中添加：
 //   { "plugin": ["@hollson/quama"] }
 
 import { createRequire } from 'module';
@@ -17,13 +15,14 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// The shared instruction builder is CommonJS; bridge to it from this ES module.
+// CommonJS 桥接
 const require = createRequire(import.meta.url);
-const { getQuamaInstructions } = require('../../hooks/quama-instructions');
+const { getQuamaInstructions, QUAMA_MARKER } = require('../../hooks/quama-instructions');
 const { getDefaultMode, normalizePersistedMode } = require('../../hooks/quama-config');
+const { detectPonytail, getPonytailInstallHint } = require('../../hooks/quama-runtime');
 const { parseCommandFile } = require('./quama-frontmatter.cjs');
 
-// OpenCode has no flag-file convention of its own; keep mode beside its config.
+// OpenCode 状态文件
 const statePath = path.join(
   process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'),
   'opencode',
@@ -43,7 +42,7 @@ function writeMode(mode) {
   fs.writeFileSync(statePath, mode);
 }
 
-// Load all rule files from .quama/rules/ directory
+// 加载 .quama/rules/ 目录下的规则文件
 function loadRuleFiles() {
   const rulesDir = path.resolve(__dirname, '../../.quama/rules');
   const rules = [];
@@ -59,7 +58,7 @@ function loadRuleFiles() {
       }
     }
   } catch (e) {
-    // Silent fail - rules are optional
+    // 规则文件可选
   }
   
   return rules.join('\n\n---\n\n');
@@ -73,7 +72,7 @@ export default async ({ client } = {}) => {
   const quamaSkillsDir = path.resolve(__dirname, '../../skills');
 
   return {
-    // Register slash commands + skills directory.
+    // 注册 slash commands + skills 目录
     config: async (config) => {
       if (!config.command) config.command = {};
       const commandDir = path.join(__dirname, '..', 'command');
@@ -92,21 +91,21 @@ export default async ({ client } = {}) => {
       }
     },
 
-    // Append the ruleset to the system prompt every turn.
+    // 每轮对话注入规则到系统提示
     'experimental.chat.system.transform': async (_input, output) => {
       const mode = readMode();
       if (mode === 'off') return;
       
-      // Load base instructions
+      // 加载基础指令（包含 🐎 标记）
       const instructions = getQuamaInstructions(mode);
       
-      // Load rule files
+      // 加载规则文件
       const ruleFiles = loadRuleFiles();
       
-      // Combine instructions and rules
+      // 组合指令和规则
       let fullContent = instructions;
       if (ruleFiles) {
-        fullContent += '\n\n---\n\n# 团队规范\n\n' + ruleFiles;
+        fullContent += '\n\n---\n\n' + QUAMA_MARKER + ' — 团队规范\n\n' + ruleFiles;
       }
       
       if (output.system.length > 0) {
@@ -116,13 +115,9 @@ export default async ({ client } = {}) => {
       }
     },
 
-    // Persist `/quama <level>` so the next turn's injection follows it.
-    // quama: mode applies from the next message, not the current one — the
-    // transform reads the flag the command writes. Good enough; switch to a
-    // synchronous store if same-turn switching ever matters.
+    // 持久化 `/quama <level>` 命令
     'command.execute.before': async (input) => {
       if (!input || input.command !== 'quama') return;
-      // `off` is persisted like any mode; the transform reads it and stays silent.
       const args = String(input.arguments || '').trim();
       const mode = args ? normalizePersistedMode(args) : getDefaultMode();
       if (!mode) return;
