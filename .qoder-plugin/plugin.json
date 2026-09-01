@@ -1,0 +1,24 @@
+{
+  "name": "myanget",
+  "version": "1.0.0",
+  "description": "Project management基座 for critical software projects. Manages code, docs, design.",
+  "author": {
+    "name": "Your Name",
+    "url": "https://github.com/yourname"
+  },
+  "homepage": "https://github.com/yourname/myanget",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourname/myanget.git"
+  },
+  "license": "MIT",
+  "keywords": ["project-management", "code-review", "documentation", "design"],
+  "engines": {
+    "qoder": ">=1.0.0"
+  },
+  "skills": ["../skills"],
+  "hooks": {
+    "UserPromptSubmit": "hooks/qoder-prompt-submit.js",
+    "PreToolUse": "hooks/qoder-pre-tool-use.js"
+  }
+}

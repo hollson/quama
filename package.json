@@ -1,0 +1,48 @@
+{
+  "name": "myanget",
+  "version": "1.0.0",
+  "description": "Project management基座 for AI agents. Manages code, docs, design for critical projects.",
+  "keywords": ["opencode-plugin", "project-management", "code-review", "documentation", "design"],
+  "license": "MIT",
+  "author": {
+    "name": "Your Name",
+    "url": "https://github.com/yourname"
+  },
+  "homepage": "https://github.com/yourname/myanget",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourname/myanget.git"
+  },
+  "main": "./.opencode/plugins/myanget.mjs",
+  "exports": {
+    ".": "./.opencode/plugins/myanget.mjs",
+    "./plugin": "./.opencode/plugins/myanget.mjs"
+  },
+  "files": [
+    "AGENTS.md",
+    "hooks/",
+    "skills/",
+    "commands/",
+    ".opencode/",
+    ".claude-plugin/",
+    ".codex-plugin/",
+    ".qoder-plugin/",
+    ".pi-extension/",
+    ".codebuddy/",
+    ".trae/",
+    ".myanget/",
+    "scripts/",
+    "docs/",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
+  "pi": {
+    "extensions": ["./.pi-extension/index.js"],
+    "skills": ["./skills"]
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

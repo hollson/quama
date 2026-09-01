@@ -1,0 +1,2 @@
+description = "Check project status including code quality, documentation, tests, and dependencies"
+prompt = "Run project status check: Analyze code quality, documentation completeness, test coverage, dependency health, and design consistency. Provide actionable insights for project improvement."

@@ -1,0 +1,2 @@
+description = "Manage project dependencies for security, updates, and compliance"
+prompt = "Manage dependencies: Check for security vulnerabilities, update dependencies, verify license compliance, or clean up unused dependencies. Keep dependencies secure and up-to-date."

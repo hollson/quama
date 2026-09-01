@@ -1,0 +1,2 @@
+description = "Manage design decisions, architecture patterns, and design consistency"
+prompt = "Manage design: Record design decisions, review architecture patterns, check design consistency, or facilitate design reviews. Ensure design quality and consistency across the project."

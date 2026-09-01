@@ -1,0 +1,2 @@
+description = "Generate and maintain project documentation"
+prompt = "Generate documentation: Create or update README, API docs, architecture docs, or changelog. Ensure documentation is accurate, comprehensive, and accessible."

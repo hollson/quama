@@ -1,0 +1,2 @@
+description = "Review code for quality, security, performance, and maintainability"
+prompt = "Run code review: Analyze code for quality, security, performance, and maintainability issues. Provide specific feedback with file paths and line numbers, along with improvement suggestions."
